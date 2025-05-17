@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="Dashboard Financiero", layout="centered")
-st.title("📊 Dashboard Financiero para Pequeños Negocios")
+st.title("📊 Dashboard Financiero")
 
 # Subida de archivo
 uploaded_file = st.file_uploader("Sube tu archivo Excel o CSV", type=["xlsx", "csv"])
