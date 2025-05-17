@@ -10,7 +10,7 @@ uploaded_file = st.file_uploader("Sube tu archivo Excel o CSV", type=["xlsx", "c
 
 if uploaded_file:
     try:
-        if uploaded_file.name.endswith('datos_financieros_ejemplo.csv'):
+        if uploaded_file.name.endswith('.csv'):
             df = pd.read_csv(uploaded_file)
         else:
             df = pd.read_excel(uploaded_file)
