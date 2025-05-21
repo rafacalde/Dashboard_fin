@@ -1,59 +1,49 @@
+# dashboard_clinica.py
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-st.set_page_config(page_title="Dashboard Financiero", layout="centered")
-st.title("📊 Dashboard Financiero")
+# Título
+st.title("📊 Dashboard Clínico Odontológico")
 
-# Subida de archivo
-uploaded_file = st.file_uploader("Sube tu archivo Excel o CSV", type=["xlsx", "csv"])
+# Subida del archivo
+archivo = st.file_uploader("Carga el archivo CSV de atenciones", type="csv")
 
-if uploaded_file:
-    try:
-        if uploaded_file.name.endswith('.csv'):
-            df = pd.read_csv(uploaded_file)
-        else:
-            df = pd.read_excel(uploaded_file)
+if archivo is not None:
+    df = pd.read_csv(archivo, parse_dates=["Fecha"])
 
-        # Verificación de columnas necesarias
-        required_cols = ['Mes', 'Ventas', 'Costos', 'Gastos Operativos']
-        if not all(col in df.columns for col in required_cols):
-            st.error(f"El archivo debe contener las columnas: {', '.join(required_cols)}")
-        else:
-            # Cálculo de KPIs
-            df['Ganancia Bruta'] = df['Ventas'] - df['Costos']
-            df['Ganancia Neta'] = df['Ganancia Bruta'] - df['Gastos Operativos']
-            df['Margen Neto (%)'] = round((df['Ganancia Neta'] / df['Ventas']) * 100, 2)
+    # Filtros
+    st.sidebar.header("Filtros")
+    odontologos = st.sidebar.multiselect("Odontólogo", options=df["Odontólogo"].unique(), default=df["Odontólogo"].unique())
+    fechas = st.sidebar.date_input("Rango de fechas", [df["Fecha"].min(), df["Fecha"].max()])
+    
+    # Aplicar filtros
+    df = df[df["Odontólogo"].isin(odontologos)]
+    df = df[(df["Fecha"] >= pd.to_datetime(fechas[0])) & (df["Fecha"] <= pd.to_datetime(fechas[1]))]
 
-            st.success("✅ Datos procesados correctamente")
+    # KPIs principales
+    total_consultas = df[df["Asistió"] == "Sí"].shape[0]
+    ingresos_totales = df[df["Asistió"] == "Sí"]["Costo"].sum()
+    ticket_promedio = df[df["Asistió"] == "Sí"]["Costo"].mean()
 
-            # Mostrar tabla
-            st.subheader("📋 Resumen de Datos")
-            st.dataframe(df)
+    st.metric("🦷 Total Consultas", total_consultas)
+    st.metric("💰 Ingresos Totales ($)", f"{ingresos_totales:.2f}")
+    st.metric("🎟️ Ticket Promedio ($)", f"{ticket_promedio:.2f}")
 
-            # Mostrar métricas totales
-            total_ventas = df['Ventas'].sum()
-            total_neta = df['Ganancia Neta'].sum()
-            promedio_margen = df['Margen Neto (%)'].mean()
+    # Gráfico de ingresos por especialidad
+    ingresos_especialidad = df[df["Asistió"] == "Sí"].groupby("Especialidad")["Costo"].sum()
+    st.subheader("Ingresos por Especialidad")
+    st.bar_chart(ingresos_especialidad)
 
-            col1, col2, col3 = st.columns(3)
-            col1.metric("Ventas Totales", f"${total_ventas:,.2f}")
-            col2.metric("Ganancia Neta", f"${total_neta:,.2f}")
-            col3.metric("Margen Neto Prom.", f"{promedio_margen:.2f}%")
+    # Consultas por día
+    st.subheader("Consultas por Día")
+    consultas_dia = df[df["Asistió"] == "Sí"].groupby("Fecha").size()
+    st.line_chart(consultas_dia)
 
-            # Gráficos
-            st.subheader("📈 Gráficos de Tendencia")
-            fig, ax = plt.subplots()
-            df.plot(x='Mes', y=['Ventas', 'Costos', 'Ganancia Neta'], marker='o', ax=ax)
-            plt.xticks(rotation=45)
-            st.pyplot(fig)
+    # Forma de pago
+    st.subheader("Distribución por Forma de Pago")
+    pagos = df[df["Asistió"] == "Sí"]["Forma_de_pago"].value_counts()
+    st.pyplot(pagos.plot.pie(autopct='%1.1f%%', ylabel='').figure)
 
-            # Descargar resultados
-            st.subheader("⬇️ Descargar resultados")
-            csv = df.to_csv(index=False).encode('utf-8')
-            st.download_button("Descargar como CSV", csv, "resultados_financieros.csv", "text/csv")
-
-    except Exception as e:
-        st.error(f"Error al procesar el archivo: {e}")
 else:
-    st.info("Por favor, sube un archivo con las columnas: Mes, Ventas, Costos, Gastos Operativos")
+    st.info("Carga un archivo para ver el dashboard.")
