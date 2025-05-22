@@ -3,6 +3,43 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
+# Usuarios autorizados
+USERS = {
+    "admin": "1234",
+    "cliente1": "pass123",
+    "cliente2": "demo2024"
+}
+
+def login():
+    st.title("Iniciar sesión")
+    username = st.text_input("Usuario")
+    password = st.text_input("Contraseña", type="password")
+    login_btn = st.button("Ingresar")
+
+    if login_btn:
+        if USERS.get(username) == password:
+            st.session_state["logged_in"] = True
+            st.session_state["user"] = username
+            st.success("Acceso concedido.")
+            st.experimental_rerun()
+        else:
+            st.error("Usuario o contraseña incorrectos.")
+# Inicializar estado
+if "logged_in" not in st.session_state:
+    st.session_state["logged_in"] = False
+
+if not st.session_state["logged_in"]:
+    login()
+    st.stop()  # Detiene ejecución hasta que se autentique
+
+
+if st.button("Cerrar sesión"):
+    st.session_state["logged_in"] = False
+    st.experimental_rerun()
+
+
+
 # Título
 st.title("📊 Dashboard Clínico Odontológico")
 
