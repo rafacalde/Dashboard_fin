@@ -2,6 +2,11 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+import pandas as pd
+
+
 
 
 # Usuarios autorizados
@@ -38,7 +43,20 @@ if st.button("Cerrar sesión"):
     st.session_state["logged_in"] = False
     st.experimental_rerun()
 
+# ----------------- CARGA DE DATOS DESDE GOOGLE SHEETS -----------------
+@st.cache_data
+def cargar_datos():
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    credentials = ServiceAccountCredentials.from_json_keyfile_name("credenciales.json", scope)
+    client = gspread.authorize(credentials)
+    
+    sheet = client.open("Nombre_del_Sheet").sheet1  # Reemplaza por el nombre real
+    data = sheet.get_all_records()
+    df = pd.DataFrame(data)
+    df["Fecha"] = pd.to_datetime(df["Fecha"])
+    return df
 
+df = cargar_datos()
 
 # Título
 st.title("📊 Dashboard Clínico Odontológico")
@@ -46,41 +64,38 @@ st.title("📊 Dashboard Clínico Odontológico")
 # Subida del archivo
 archivo = st.file_uploader("Carga el archivo CSV de atenciones", type="csv")
 
-if archivo is not None:
-    df = pd.read_csv(archivo, parse_dates=["Fecha"])
+# ----------------- DASHBOARD -----------------
+st.title("📊 Dashboard Clínico Odontológico")
 
-    # Filtros
-    st.sidebar.header("Filtros")
-    odontologos = st.sidebar.multiselect("Odontólogo", options=df["Odontólogo"].unique(), default=df["Odontólogo"].unique())
-    fechas = st.sidebar.date_input("Rango de fechas", [df["Fecha"].min(), df["Fecha"].max()])
-    
-    # Aplicar filtros
-    df = df[df["Odontólogo"].isin(odontologos)]
-    df = df[(df["Fecha"] >= pd.to_datetime(fechas[0])) & (df["Fecha"] <= pd.to_datetime(fechas[1]))]
+# Filtros
+st.sidebar.header("Filtros")
+odontologos = st.sidebar.multiselect("Odontólogo", options=df["Odontólogo"].unique(), default=df["Odontólogo"].unique())
+fechas = st.sidebar.date_input("Rango de fechas", [df["Fecha"].min(), df["Fecha"].max()])
 
-    # KPIs principales
-    total_consultas = df[df["Asistió"] == "Sí"].shape[0]
-    ingresos_totales = df[df["Asistió"] == "Sí"]["Costo"].sum()
-    ticket_promedio = df[df["Asistió"] == "Sí"]["Costo"].mean()
+# Aplicar filtros
+df = df[df["Odontólogo"].isin(odontologos)]
+df = df[(df["Fecha"] >= pd.to_datetime(fechas[0])) & (df["Fecha"] <= pd.to_datetime(fechas[1]))]
 
-    st.metric("🦷 Total Consultas", total_consultas)
-    st.metric("💰 Ingresos Totales ($)", f"{ingresos_totales:.2f}")
-    st.metric("🎟️ Ticket Promedio ($)", f"{ticket_promedio:.2f}")
+# KPIs principales
+total_consultas = df[df["Asistió"] == "Sí"].shape[0]
+ingresos_totales = df[df["Asistió"] == "Sí"]["Costo"].sum()
+ticket_promedio = df[df["Asistió"] == "Sí"]["Costo"].mean()
 
-    # Gráfico de ingresos por especialidad
-    ingresos_especialidad = df[df["Asistió"] == "Sí"].groupby("Especialidad")["Costo"].sum()
-    st.subheader("Ingresos por Especialidad")
-    st.bar_chart(ingresos_especialidad)
+st.metric("🦷 Total Consultas", total_consultas)
+st.metric("💰 Ingresos Totales ($)", f"{ingresos_totales:.2f}")
+st.metric("🎟️ Ticket Promedio ($)", f"{ticket_promedio:.2f}")
 
-    # Consultas por día
-    st.subheader("Consultas por Día")
-    consultas_dia = df[df["Asistió"] == "Sí"].groupby("Fecha").size()
-    st.line_chart(consultas_dia)
+# Gráfico de ingresos por especialidad
+ingresos_especialidad = df[df["Asistió"] == "Sí"].groupby("Especialidad")["Costo"].sum()
+st.subheader("Ingresos por Especialidad")
+st.bar_chart(ingresos_especialidad)
 
-    # Forma de pago
-    st.subheader("Distribución por Forma de Pago")
-    pagos = df[df["Asistió"] == "Sí"]["Forma_de_pago"].value_counts()
-    st.pyplot(pagos.plot.pie(autopct='%1.1f%%', ylabel='').figure)
+# Consultas por día
+st.subheader("Consultas por Día")
+consultas_dia = df[df["Asistió"] == "Sí"].groupby("Fecha").size()
+st.line_chart(consultas_dia)
 
-else:
-    st.info("Carga un archivo para ver el dashboard.")
+# Forma de pago
+st.subheader("Distribución por Forma de Pago")
+pagos = df[df["Asistió"] == "Sí"]["Forma_de_pago"].value_counts()
+st.pyplot(pagos.plot.pie(autopct='%1.1f%%', ylabel='').figure)
