@@ -20,28 +20,22 @@ def login():
     st.title("Iniciar sesión")
     username = st.text_input("Usuario")
     password = st.text_input("Contraseña", type="password")
-    login_btn = st.button("Ingresar")
 
-    if login_btn:
+    if st.button("Ingresar"):
         if USERS.get(username) == password:
             st.session_state["logged_in"] = True
             st.session_state["user"] = username
-            st.success("Acceso concedido.")
-            st.experimental_rerun()
         else:
             st.error("Usuario o contraseña incorrectos.")
 # Inicializar estado
 if "logged_in" not in st.session_state:
     st.session_state["logged_in"] = False
 
+# Mostrar login solo si no ha iniciado sesión
 if not st.session_state["logged_in"]:
     login()
-    st.stop()  # Detiene ejecución hasta que se autentique
+    st.stop()
 
-
-if st.button("Cerrar sesión"):
-    st.session_state["logged_in"] = False
-    st.experimental_rerun()
 
 # ----------------- CARGA DE DATOS DESDE GOOGLE SHEETS -----------------
 @st.cache_data
