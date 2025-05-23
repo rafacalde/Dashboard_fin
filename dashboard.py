@@ -32,16 +32,22 @@ if not st.session_state["logged_in"]:
     st.stop()
 
 # -------------------- CONEXIÓN A GOOGLE SHEETS --------------------
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+import json
+
 def conectar_sheets():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credenciales.json", scope)
+    
+    # Leer las credenciales desde secrets
+    creds_dict = st.secrets["google_service_account"]
+    
+    # Crear credenciales desde diccionario
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(dict(creds_dict), scope)
+    
     client = gspread.authorize(creds)
     return client
 
-def guardar_paciente(nombre, edad, motivo):
-    client = conectar_sheets()
-    sheet = client.open("Pacientes_Clinica").sheet1
-    sheet.append_row([nombre, edad, motivo])
 
 # -------------------- CARGA DE DATOS CSV DESDE DRIVE --------------------
 @st.cache_data
