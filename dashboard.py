@@ -9,29 +9,38 @@ import gdown
 
 
 # -------------------- LOGIN --------------------
-USERS = {
-    "admin": "1234",
-    "cliente1": "pass123",
-    "cliente2": "demo2024"
+USUARIOS = {
+    "admin": {"password": "admin123", "rol": "admin"},
+    "usuario": {"password": "usuario123", "rol": "user"}
 }
 
 def login():
-    st.title("Iniciar sesión")
-    username = st.text_input("Usuario")
-    password = st.text_input("Contraseña", type="password")
-    if st.button("Ingresar"):
-        if USERS.get(username) == password:
-            st.session_state["logged_in"] = True
-            st.session_state["user"] = username
+    st.sidebar.title("🔐 Iniciar sesión")
+    username = st.sidebar.text_input("Usuario")
+    password = st.sidebar.text_input("Contraseña", type="password")
+
+    if st.sidebar.button("Login"):
+        user = USUARIOS.get(username)
+        if user and user["password"] == password:
+            st.session_state["logueado"] = True
+            st.session_state["usuario"] = username
+            st.session_state["rol"] = user["rol"]
         else:
-            st.error("Usuario o contraseña incorrectos.")
+            st.sidebar.error("Credenciales incorrectas")
 
-if "logged_in" not in st.session_state:
-    st.session_state["logged_in"] = False
-
-if not st.session_state["logged_in"]:
+if "logueado" not in st.session_state:
     login()
     st.stop()
+
+# Mostrar opciones según el rol
+if st.session_state["rol"] == "admin":
+    st.sidebar.success("Bienvenido, administrador")
+    st.header("📊 Dashboard de Clínica")
+    # Mostrar dashboard
+else:
+    st.sidebar.success("Bienvenido, usuario")
+    st.header("📝 Registrar nuevo paciente")
+    # Mostrar solo formulario de ingreso
 
 # -------------------- CONEXIÓN A GOOGLE SHEETS --------------------
 import gspread
