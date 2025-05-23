@@ -63,6 +63,12 @@ def cargar_datos():
         st.warning("⚠️ El archivo no contiene una columna llamada 'Fecha'. Algunas funciones podrían no funcionar.")
     return df
 
+def guardar_paciente(nombre, edad, motivo):
+    client = conectar_sheets()
+    sheet = client.open("nombre_de_tu_spreadsheet").worksheet("Pacientes")
+    nueva_fila = [nombre, edad, motivo]
+    sheet.append_row(nueva_fila)
+
 
 # -------------------- INTERFAZ PRINCIPAL --------------------
 st.title("📊 Dashboard Clínico Odontológico")
