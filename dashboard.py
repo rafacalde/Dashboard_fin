@@ -61,6 +61,8 @@ st.write("Hojas disponibles:", [ws.title for ws in sheet.worksheets()])
 sheet = client.open_by_key(spreadsheet_id).worksheet("Pacientes")
 
 
+spreadsheet = client.open_by_key(spreadsheet_id)
+st.write("Hojas disponibles:", [ws.title for ws in spreadsheet.worksheets()])
 
 
 
