@@ -41,15 +41,19 @@ if not st.session_state["logged_in"]:
 @st.cache_data
 def cargar_datos():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    credentials = ServiceAccountCredentials.from_json_keyfile_name("credenciales.json", scope)
+    
+    # Usar secrets de Streamlit
+    cred_dict = st.secrets["google_service_account"]
+    credentials = ServiceAccountCredentials.from_json_keyfile_dict(cred_dict, scope)
+
     client = gspread.authorize(credentials)
     
-    sheet = client.open("Nombre_del_Sheet").sheet1  # Reemplaza por el nombre real
+    # Abre la hoja de cálculo
+    sheet = client.open("datos_clinica_odontologica").worksheet("Hoja1")
     data = sheet.get_all_records()
     df = pd.DataFrame(data)
-    df["Fecha"] = pd.to_datetime(df["Fecha"])
+    
     return df
-
 df = cargar_datos()
 
 # Título
