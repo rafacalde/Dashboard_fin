@@ -49,6 +49,8 @@ def conectar_sheets():
     client = gspread.authorize(creds)
     return client
 
+st.write(st.secrets.keys())  # Esto te dirá si 'gcp_service_account' está presente
+
 
 client = conectar_sheets()
 spreadsheet_id = "1wgQf8IZFSVoSPLrluOVrjygDVh_0QqJsDOpKUHozBz8"
