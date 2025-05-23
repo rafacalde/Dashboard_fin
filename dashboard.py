@@ -65,7 +65,7 @@ def cargar_datos():
 
 def guardar_paciente(nombre, edad, motivo):
     client = conectar_sheets()
-    sheet = client.open("nombre_de_tu_spreadsheet").worksheet("Pacientes")
+    sheet = client.open("nombre_de_tu_paciente").worksheet("Pacientes")
     nueva_fila = [nombre, edad, motivo]
     sheet.append_row(nueva_fila)
 
