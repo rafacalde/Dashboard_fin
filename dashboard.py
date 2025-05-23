@@ -5,6 +5,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import gdown
+
 
 # -------------------- LOGIN --------------------
 USERS = {
@@ -67,7 +69,11 @@ sheet = spreadsheet.worksheet("datos_paciente")
 def cargar_datos():
     file_id = "1joOz_ZxUDgfZZ-r3F0XjdNsUoSmXJEBg"
     url = f"https://drive.google.com/uc?export=download&id={file_id}"
-    df = pd.read_csv(url)
+    output = "datos_trx.csv"
+    gdown.download(url, output, quiet=False)
+
+    df = pd.read_csv(output)
+
 
     # Verificamos si la columna 'Fecha' existe antes de convertirla
     if "Fecha" in df.columns:
