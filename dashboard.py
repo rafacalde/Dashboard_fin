@@ -34,22 +34,26 @@ if not st.session_state["logged_in"]:
 # -------------------- CONEXIÓN A GOOGLE SHEETS --------------------
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-import json
 
 
 def conectar_sheets():
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('credenciales.json', scope)
+    
+    creds_dict = st.secrets["gcp_service_account"]
+    
+    # La clave privada puede tener problemas con \n, reemplazamos si es necesario:
+    if '\\n' in creds_dict["private_key"]:
+        creds_dict["private_key"] = creds_dict["private_key"].replace('\\n', '\n')
+    
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
     return client
 
-client = conectar_sheets()
 
-# Prueba con open_by_key (mejor que por nombre)
-spreadsheet_id = '1wgQf8IZFSVoSPLrluOVrjygDVh_0QqJsDOpKUHozBz8'
+client = conectar_sheets()
+spreadsheet_id = "1wgQf8IZFSVoSPLrluOVrjygDVh_0QqJsDOpKUHozBz8"
 sheet = client.open_by_key(spreadsheet_id).worksheet("Pacientes")
 
-print(sheet.get_all_records())
 
 
 
