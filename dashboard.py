@@ -92,7 +92,6 @@ def guardar_paciente(nombre, edad, motivo):
 #https://drive.google.com/file/d/1joOz_ZxUDgfZZ-r3F0XjdNsUoSmXJEBg/view?usp=sharing
 
 
-
 # -------------------- INTERFAZ PRINCIPAL --------------------
 st.title("📊 Dashboard Clínico Odontológico")
 
