@@ -65,7 +65,6 @@ st.write("Hojas disponibles:", [ws.title for ws in spreadsheet.worksheets()])
 
 
 
-
 # -------------------- CARGA DE DATOS CSV DESDE DRIVE --------------------
 @st.cache_data
 def cargar_datos():
