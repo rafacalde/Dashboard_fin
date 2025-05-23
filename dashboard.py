@@ -46,12 +46,17 @@ def guardar_paciente(nombre, edad, motivo):
 # -------------------- CARGA DE DATOS CSV DESDE DRIVE --------------------
 @st.cache_data
 def cargar_datos():
-    file_id = "1joOz_ZxUDgfZZ-r3F0XjdNsUoSmXJEBg"  # Reemplaza por tu ID
+    file_id = "1joOz_ZxUDgfZZ-r3F0XjdNsUoSmXJEBg"  # Tu ID de archivo
     url = f"https://drive.google.com/uc?id={file_id}"
-    df = pd.read_csv(url, parse_dates=["Fecha"])
+    df = pd.read_csv(url)
+
+    # Verificamos si la columna 'Fecha' existe antes de convertirla
+    if "Fecha" in df.columns:
+        df["Fecha"] = pd.to_datetime(df["Fecha"], errors="coerce")  # evita errores si hay fechas mal escritas
+    else:
+        st.warning("⚠️ El archivo no contiene una columna llamada 'Fecha'. Algunas funciones podrían no funcionar.")
     return df
 
-df = cargar_datos()
 
 # -------------------- INTERFAZ PRINCIPAL --------------------
 st.title("📊 Dashboard Clínico Odontológico")
