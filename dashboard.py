@@ -37,21 +37,13 @@ from oauth2client.service_account import ServiceAccountCredentials
 import copy
 
 def conectar_sheets():
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds_dict = copy.deepcopy(st.secrets["google_service_account"])
-    creds_dict["private_key"] = creds_dict["private_key"].replace('\\n', '\n')
-
-    
-    scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-    
-    creds_dict = st.secrets["gcp_service_account"]
-    
-    # La clave privada puede tener problemas con \n, reemplazamos si es necesario:
-    #if '\\n' in creds_dict["private_key"]:
-     #   creds_dict["private_key"] = creds_dict["private_key"].replace('\\n', '\n')
-    
+    creds_dict["private_key"] = creds_dict["private_key"].replace("\\n", "\n")
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
     return client
+
 
 st.write(st.secrets.keys())  # Esto te dirá si 'gcp_service_account' está presente
 
