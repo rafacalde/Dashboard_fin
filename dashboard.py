@@ -69,6 +69,16 @@ def guardar_paciente(nombre, edad, motivo):
     nueva_fila = [nombre, edad, motivo]
     sheet.append_row(nueva_fila)
 
+def listar_hojas():
+    client = conectar_sheets()
+    sheets = client.openall()
+    print("Hojas disponibles:")
+    for s in sheets:
+        print(s.title)
+
+listar_hojas()
+
+
 
 # -------------------- INTERFAZ PRINCIPAL --------------------
 st.title("📊 Dashboard Clínico Odontológico")
