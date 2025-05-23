@@ -38,23 +38,14 @@ if not st.session_state["logged_in"]:
 
 
 # ----------------- CARGA DE DATOS DESDE GOOGLE SHEETS -----------------
+import pandas as pd
+
 @st.cache_data
 def cargar_datos():
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    
-    # Usar secrets de Streamlit
-    cred_dict = st.secrets["google_service_account"]
-    credentials = ServiceAccountCredentials.from_json_keyfile_dict(cred_dict, scope)
-
-    client = gspread.authorize(credentials)
-    
-    # Abre la hoja de cálculo
-    sheet = client.open("datos_clinica_odontologica").worksheet("Hoja1")
-    data = sheet.get_all_records()
-    df = pd.DataFrame(data)
-    
+    file_id = "1joOz_ZxUDgfZZ-r3F0XjdNsUoSmXJEBg"  # <-- cambia esto por tu ID
+    url = f"https://drive.google.com/uc?id={file_id}"
+    df = pd.read_csv(url)
     return df
-df = cargar_datos()
 
 # Título
 st.title("📊 Dashboard Clínico Odontológico")
