@@ -52,16 +52,13 @@ def conectar_sheets():
 
 #st.write(st.secrets.keys())  # Esto te dirá si 'gcp_service_account' está presente
 
-
 client = conectar_sheets()
 spreadsheet_id = "1wgQf8IZFSVoSPLrluOVrjygDVh_0QqJsDOpKUHozBz8"
-st.write("Hojas disponibles:", [ws.title for ws in sheet.worksheets()])
-sheet = client.open_by_key(spreadsheet_id).worksheet("datos_paciente")
-
-
 
 spreadsheet = client.open_by_key(spreadsheet_id)
 st.write("Hojas disponibles:", [ws.title for ws in spreadsheet.worksheets()])
+
+sheet = spreadsheet.worksheet("datos_paciente")
 
 
 
