@@ -60,8 +60,8 @@ sheet = client.open_by_key(spreadsheet_id).worksheet("datos_paciente")
 
 
 
-#spreadsheet = client.open_by_key(spreadsheet_id)
-#st.write("Hojas disponibles:", [ws.title for ws in spreadsheet.worksheets()])
+spreadsheet = client.open_by_key(spreadsheet_id)
+st.write("Hojas disponibles:", [ws.title for ws in spreadsheet.worksheets()])
 
 
 
