@@ -66,7 +66,7 @@ sheet = spreadsheet.worksheet("datos_paciente")
 @st.cache_data
 def cargar_datos():
     file_id = "1joOz_ZxUDgfZZ-r3F0XjdNsUoSmXJEBg"  # Tu ID de archivo
-    url = "https://drive.google.com/file/d/1joOz_ZxUDgfZZ-r3F0XjdNsUoSmXJEBg/view?usp=sharing"
+    url = f"https://drive.google.com/file/d/1joOz_ZxUDgfZZ-r3F0XjdNsUoSmXJEBg/view?usp=sharing"
     df = pd.read_csv(url)
 
     # Verificamos si la columna 'Fecha' existe antes de convertirla
@@ -83,7 +83,7 @@ def guardar_paciente(nombre, edad, motivo):
     sheet.append_row(nueva_fila)
 
 
-https://drive.google.com/file/d/1joOz_ZxUDgfZZ-r3F0XjdNsUoSmXJEBg/view?usp=sharing
+#https://drive.google.com/file/d/1joOz_ZxUDgfZZ-r3F0XjdNsUoSmXJEBg/view?usp=sharing
 
 
 
