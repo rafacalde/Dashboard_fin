@@ -55,11 +55,9 @@ def conectar_sheets():
 
 client = conectar_sheets()
 spreadsheet_id = "1wgQf8IZFSVoSPLrluOVrjygDVh_0QqJsDOpKUHozBz8"
+st.write("Hojas disponibles:", [ws.title for ws in sheet.worksheets()])
+sheet = client.open_by_key(spreadsheet_id).worksheet("datos_paciente")
 
-#st.write("Hojas disponibles:", [ws.title for ws in sheet.worksheets()])
-#sheet = client.open_by_key(spreadsheet_id).worksheet("datos_paciente")
-
-sheet = client.open("Pacientes").worksheet("Pacientes")
 
 
 #spreadsheet = client.open_by_key(spreadsheet_id)
@@ -84,9 +82,10 @@ def cargar_datos():
 
 def guardar_paciente(nombre, edad, motivo):
     client = conectar_sheets()
-    sheet = client.open("nombre_de_tu_paciente").worksheet("Pacientes")
+    sheet = client.open_by_key(spreadsheet_id).worksheet("Pacientes")
     nueva_fila = [nombre, edad, motivo]
     sheet.append_row(nueva_fila)
+
 
 
 
