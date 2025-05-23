@@ -36,17 +36,21 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import json
 
+
 def conectar_sheets():
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    
-    # Leer las credenciales desde secrets
-    creds_dict = st.secrets["google_service_account"]
-    
-    # Crear credenciales desde diccionario
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(dict(creds_dict), scope)
-    
+    scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+    creds = ServiceAccountCredentials.from_json_keyfile_name('credenciales.json', scope)
     client = gspread.authorize(creds)
     return client
+
+client = conectar_sheets()
+
+# Prueba con open_by_key (mejor que por nombre)
+spreadsheet_id = '1wgQf8IZFSVoSPLrluOVrjygDVh_0QqJsDOpKUHozBz8'
+sheet = client.open_by_key(spreadsheet_id).worksheet("Pacientes")
+
+print(sheet.get_all_records())
+
 
 
 # -------------------- CARGA DE DATOS CSV DESDE DRIVE --------------------
@@ -69,14 +73,7 @@ def guardar_paciente(nombre, edad, motivo):
     nueva_fila = [nombre, edad, motivo]
     sheet.append_row(nueva_fila)
 
-def listar_hojas():
-    client = conectar_sheets()
-    sheets = client.openall()
-    print("Hojas disponibles:")
-    for s in sheets:
-        print(s.title)
 
-listar_hojas()
 
 
 
