@@ -83,14 +83,6 @@ listar_hojas()
 # -------------------- INTERFAZ PRINCIPAL --------------------
 st.title("📊 Dashboard Clínico Odontológico")
 
-def listar_hojas():
-    client = conectar_sheets()
-    sheets = client.openall()
-    print("Hojas disponibles:")
-    for s in sheets:
-        print(s.title)
-
-listar_hojas()
 
 menu = st.sidebar.radio("Selecciona una opción", ["Visualización", "Agregar paciente"])
 
