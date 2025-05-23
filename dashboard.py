@@ -98,6 +98,9 @@ if menu == "Visualización":
     st.subheader("📈 Visualización de datos clínicos")
 
     st.sidebar.header("Filtros")
+
+    df = cargar_datos()
+
     odontologos = st.sidebar.multiselect("Odontólogo", options=df["Odontólogo"].unique(), default=df["Odontólogo"].unique())
     fechas = st.sidebar.date_input("Rango de fechas", [df["Fecha"].min(), df["Fecha"].max()])
 
