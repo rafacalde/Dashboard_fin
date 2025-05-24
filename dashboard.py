@@ -68,7 +68,7 @@ client = conectar_sheets()
 spreadsheet_id = "1wgQf8IZFSVoSPLrluOVrjygDVh_0QqJsDOpKUHozBz8"
 
 spreadsheet = client.open_by_key(spreadsheet_id)
-st.write("Hojas disponibles:", [ws.title for ws in spreadsheet.worksheets()])
+#st.write("Hojas disponibles:", [ws.title for ws in spreadsheet.worksheets()])
 
 sheet = spreadsheet.worksheet("datos_paciente")
 
