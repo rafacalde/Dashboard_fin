@@ -9,6 +9,7 @@ import gdown
 
 
 # -------------------- LOGIN --------------------
+# Listado de usarios con su pasword y rol
 USUARIOS = {
     "admin": {"password": "admin123", "rol": "admin"},
     "usuario": {"password": "usuario123", "rol": "user"}
@@ -102,7 +103,7 @@ def guardar_paciente(nombre, edad, motivo):
 
 
 # -------------------- INTERFAZ PRINCIPAL --------------------
-st.title("📊 Dashboard Clínico Odontológico")
+#st.title("📊 Dashboard Clínico Odontológico")
 
 
 menu = st.sidebar.radio("Selecciona una opción", ["Visualización", "Agregar paciente"])
